@@ -1,6 +1,5 @@
 /**
 Kakapo Token
-
   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#^.  ........,(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   @@@@@@@@@@@@@@@@@@@@@@@@@@/ ,.........@@@,...../(,@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -33,113 +32,19 @@ Kakapo Token
   @@@@@@@@@@@@@@@@&&&&##((#@%#^,,,,,,,,&%%#((((((((((((((@(&&&&/////////((@////
   @@@@@@@@@@@@@@@@@@@@&&&&&%##@/,,^,,,^,@(##((((((%((%&&&&&%(((((((((((@(((/^^^
   &&&//////////////////////&&&&&&&&&&&&&&&&&&&&&&&&&&&//////////////////////&&&
-
   Twitter: https://www.twitter.com/KakapoToken
   Discord: https://discord.com/kakapotoken
   Instagram: https://www.instagram.com/kakapotoken
   Facebook: https://www.facebook.com/Kakapotoken/
-
 */
 
 // SPDX-License-Identifier: NOLICENSE
 
-pragma solidity ^0.8.4;
-
-////////////////////////////////
-///////////// PRED ///////////
-//////////////////////////////
-
-/*
- * @dev Provides information about the current execution context, including the
- * sender of the transaction and its data. While these are generally available
- * via msg.sender and msg.data, they should not be accessed in such a direct
- * manner, since when dealing with GSN meta-transactions the account sending and
- * paying for execution may not be the actual sender (as far as an application
- * is concerned).
- *
- * This contract is only required for intermediate, library-like contracts.
- */
-abstract contract Context {
-    function _msgSender() internal view virtual returns (address payable) {
-        return payable(msg.sender);
-    }
-
-    function _msgData() internal view virtual returns (bytes memory) {
-        this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691
-        return msg.data;
-    }
-}
+pragma solidity ^0.6.2;
 
 /**
- * @dev Contract module which provides a basic access control mechanism, where
- * there is an account (an owner) that can be granted exclusive access to
- * specific functions.
- *
- * By default, the owner account will be the one that deploys the contract. This
- * can later be changed with {transferOwnership}.
- *
- * This module is used through inheritance. It will make available the modifier
- * `onlyOwner`, which can be applied to your functions to restrict their use to
- * the owner.
+ * @dev Interface of the ERC20 standard as defined in the EIP.
  */
-abstract contract Ownable is Context {
-    address private _owner;
-
-    event OwnershipTransferred(
-        address indexed previousOwner,
-        address indexed newOwner
-    );
-
-    /**
-     * @dev Initializes the contract setting the deployer as the initial owner.
-     */
-    constructor() {
-        address msgSender = _msgSender();
-        _owner = msgSender;
-        emit OwnershipTransferred(address(0), msgSender);
-    }
-
-    /**
-     * @dev Returns the address of the current owner.
-     */
-    function owner() public view virtual returns (address) {
-        return _owner;
-    }
-
-    /**
-     * @dev Throws if called by any account other than the owner.
-     */
-    modifier onlyOwner() {
-        require(owner() == _msgSender(), "Ownable: caller is not the owner");
-        _;
-    }
-
-    /**
-     * @dev Leaves the contract without owner. It will not be possible to call
-     * `onlyOwner` functions anymore. Can only be called by the current owner.
-     *
-     * NOTE: Renouncing ownership will leave the contract without an owner,
-     * thereby removing any functionality that is only available to the owner.
-     */
-    function renounceOwnership() public virtual onlyOwner {
-        emit OwnershipTransferred(_owner, address(0));
-        _owner = address(0);
-    }
-
-    /**
-     * @dev Transfers ownership of the contract to a new account (`newOwner`).
-     * Can only be called by the current owner.
-     */
-    function transferOwnership(address newOwner) public virtual onlyOwner {
-        require(
-            newOwner != address(0),
-            "Ownable: new owner is the zero address"
-        );
-        emit OwnershipTransferred(_owner, newOwner);
-        _owner = newOwner;
-    }
-}
-
 interface IERC20 {
     /**
      * @dev Returns the amount of tokens in existence.
@@ -224,6 +129,220 @@ interface IERC20 {
     );
 }
 
+// File: contracts\IERC20Metadata.sol
+
+pragma solidity ^0.6.2;
+
+/**
+ * @dev Interface for the optional metadata functions from the ERC20 standard.
+ *
+ * _Available since v4.1._
+ */
+interface IERC20Metadata is IERC20 {
+    /**
+     * @dev Returns the name of the token.
+     */
+    function name() external view returns (string memory);
+
+    /**
+     * @dev Returns the symbol of the token.
+     */
+    function symbol() external view returns (string memory);
+
+    /**
+     * @dev Returns the decimals places of the token.
+     */
+    function decimals() external view returns (uint8);
+}
+
+// File: contracts\Context.sol
+
+pragma solidity ^0.6.2;
+
+/*
+ * @dev Provides information about the current execution context, including the
+ * sender of the transaction and its data. While these are generally available
+ * via msg.sender and msg.data, they should not be accessed in such a direct
+ * manner, since when dealing with meta-transactions the account sending and
+ * paying for execution may not be the actual sender (as far as an application
+ * is concerned).
+ *
+ * This contract is only required for intermediate, library-like contracts.
+ */
+abstract contract Context {
+    function _msgSender() internal view virtual returns (address) {
+        return msg.sender;
+    }
+
+    function _msgData() internal view virtual returns (bytes calldata) {
+        this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691
+        return msg.data;
+    }
+}
+
+// File: contracts\SafeMath.sol
+
+pragma solidity ^0.6.2;
+
+library SafeMath {
+    /**
+     * @dev Returns the addition of two unsigned integers, reverting on
+     * overflow.
+     *
+     * Counterpart to Solidity's `+` operator.
+     *
+     * Requirements:
+     *
+     * - Addition cannot overflow.
+     */
+    function add(uint256 a, uint256 b) internal pure returns (uint256) {
+        uint256 c = a + b;
+        require(c >= a, "SafeMath: addition overflow");
+
+        return c;
+    }
+
+    /**
+     * @dev Returns the subtraction of two unsigned integers, reverting on
+     * overflow (when the result is negative).
+     *
+     * Counterpart to Solidity's `-` operator.
+     *
+     * Requirements:
+     *
+     * - Subtraction cannot overflow.
+     */
+    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
+        return sub(a, b, "SafeMath: subtraction overflow");
+    }
+
+    /**
+     * @dev Returns the subtraction of two unsigned integers, reverting with custom message on
+     * overflow (when the result is negative).
+     *
+     * Counterpart to Solidity's `-` operator.
+     *
+     * Requirements:
+     *
+     * - Subtraction cannot overflow.
+     */
+    function sub(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
+        require(b <= a, errorMessage);
+        uint256 c = a - b;
+
+        return c;
+    }
+
+    /**
+     * @dev Returns the multiplication of two unsigned integers, reverting on
+     * overflow.
+     *
+     * Counterpart to Solidity's `*` operator.
+     *
+     * Requirements:
+     *
+     * - Multiplication cannot overflow.
+     */
+    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
+        // benefit is lost if 'b' is also tested.
+        // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
+        if (a == 0) {
+            return 0;
+        }
+
+        uint256 c = a * b;
+        require(c / a == b, "SafeMath: multiplication overflow");
+
+        return c;
+    }
+
+    /**
+     * @dev Returns the integer division of two unsigned integers. Reverts on
+     * division by zero. The result is rounded towards zero.
+     *
+     * Counterpart to Solidity's `/` operator. Note: this function uses a
+     * `revert` opcode (which leaves remaining gas untouched) while Solidity
+     * uses an invalid opcode to revert (consuming all remaining gas).
+     *
+     * Requirements:
+     *
+     * - The divisor cannot be zero.
+     */
+    function div(uint256 a, uint256 b) internal pure returns (uint256) {
+        return div(a, b, "SafeMath: division by zero");
+    }
+
+    /**
+     * @dev Returns the integer division of two unsigned integers. Reverts with custom message on
+     * division by zero. The result is rounded towards zero.
+     *
+     * Counterpart to Solidity's `/` operator. Note: this function uses a
+     * `revert` opcode (which leaves remaining gas untouched) while Solidity
+     * uses an invalid opcode to revert (consuming all remaining gas).
+     *
+     * Requirements:
+     *
+     * - The divisor cannot be zero.
+     */
+    function div(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
+        require(b > 0, errorMessage);
+        uint256 c = a / b;
+        // assert(a == b * c + a % b); // There is no case in which this doesn't hold
+
+        return c;
+    }
+
+    /**
+     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
+     * Reverts when dividing by zero.
+     *
+     * Counterpart to Solidity's `%` operator. This function uses a `revert`
+     * opcode (which leaves remaining gas untouched) while Solidity uses an
+     * invalid opcode to revert (consuming all remaining gas).
+     *
+     * Requirements:
+     *
+     * - The divisor cannot be zero.
+     */
+    function mod(uint256 a, uint256 b) internal pure returns (uint256) {
+        return mod(a, b, "SafeMath: modulo by zero");
+    }
+
+    /**
+     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
+     * Reverts with custom message when dividing by zero.
+     *
+     * Counterpart to Solidity's `%` operator. This function uses a `revert`
+     * opcode (which leaves remaining gas untouched) while Solidity uses an
+     * invalid opcode to revert (consuming all remaining gas).
+     *
+     * Requirements:
+     *
+     * - The divisor cannot be zero.
+     */
+    function mod(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
+        require(b != 0, errorMessage);
+        return a % b;
+    }
+}
+
+// File: contracts\ERC20.sol
+
+pragma solidity ^0.6.2;
+
 /**
  * @dev Implementation of the {IERC20} interface.
  *
@@ -248,7 +367,7 @@ interface IERC20 {
  * functions have been added to mitigate the well-known issues around setting
  * allowances. See {IERC20-approve}.
  */
-contract ERC20 is Context, IERC20 {
+contract ERC20 is Context, IERC20, IERC20Metadata {
     using SafeMath for uint256;
 
     mapping(address => uint256) private _balances;
@@ -259,27 +378,25 @@ contract ERC20 is Context, IERC20 {
 
     string private _name;
     string private _symbol;
-    uint8 private _decimals;
 
     /**
-     * @dev Sets the values for {name} and {symbol}, initializes {decimals} with
-     * a default value of 18.
+     * @dev Sets the values for {name} and {symbol}.
      *
-     * To select a different value for {decimals}, use {_setupDecimals}.
+     * The default value of {decimals} is 18. To select a different value for
+     * {decimals} you should overload it.
      *
-     * All three of these values are immutable: they can only be set once during
+     * All two of these values are immutable: they can only be set once during
      * construction.
      */
-    constructor(string memory name_, string memory symbol_) {
+    constructor(string memory name_, string memory symbol_) public {
         _name = name_;
         _symbol = symbol_;
-        _decimals = 18;
     }
 
     /**
      * @dev Returns the name of the token.
      */
-    function name() public view virtual returns (string memory) {
+    function name() public view virtual override returns (string memory) {
         return _name;
     }
 
@@ -287,7 +404,7 @@ contract ERC20 is Context, IERC20 {
      * @dev Returns the symbol of the token, usually a shorter version of the
      * name.
      */
-    function symbol() public view virtual returns (string memory) {
+    function symbol() public view virtual override returns (string memory) {
         return _symbol;
     }
 
@@ -297,15 +414,15 @@ contract ERC20 is Context, IERC20 {
      * be displayed to a user as `5,05` (`505 / 10 ** 2`).
      *
      * Tokens usually opt for a value of 18, imitating the relationship between
-     * Ether and Wei. This is the value {ERC20} uses, unless {_setupDecimals} is
-     * called.
+     * Ether and Wei. This is the value {ERC20} uses, unless this function is
+     * overridden;
      *
      * NOTE: This information is only used for _display_ purposes: it in
      * no way affects any of the arithmetic of the contract, including
      * {IERC20-balanceOf} and {IERC20-transfer}.
      */
-    function decimals() public view virtual returns (uint8) {
-        return _decimals;
+    function decimals() public view virtual override returns (uint8) {
+        return 18;
     }
 
     /**
@@ -500,7 +617,7 @@ contract ERC20 is Context, IERC20 {
      *
      * Requirements:
      *
-     * - `to` cannot be the zero address.
+     * - `account` cannot be the zero address.
      */
     function _mint(address account, uint256 amount) internal virtual {
         require(account != address(0), "ERC20: mint to the zero address");
@@ -562,17 +679,6 @@ contract ERC20 is Context, IERC20 {
     }
 
     /**
-     * @dev Sets {decimals} to a value other than the default one of 18.
-     *
-     * WARNING: This function should only be called from the constructor. Most
-     * applications that interact with token contracts will not expect
-     * {decimals} to ever change, and may work incorrectly if it does.
-     */
-    function _setupDecimals(uint8 decimals_) internal virtual {
-        _decimals = decimals_;
-    }
-
-    /**
      * @dev Hook that is called before any transfer of tokens. This includes
      * minting and burning.
      *
@@ -593,39 +699,183 @@ contract ERC20 is Context, IERC20 {
     ) internal virtual {}
 }
 
-////////////////////////////////
-///////// Interfaces ///////////
-////////////////////////////////
+// File: contracts\SafeMathUint.sol
 
-interface IUniswapV2Factory {
-    event PairCreated(
-        address indexed token0,
-        address indexed token1,
-        address pair,
-        uint256
+pragma solidity ^0.6.2;
+
+/**
+ * @title SafeMathUint
+ * @dev Math operations with safety checks that revert on error
+ */
+library SafeMathUint {
+    function toInt256Safe(uint256 a) internal pure returns (int256) {
+        int256 b = int256(a);
+        require(b >= 0);
+        return b;
+    }
+}
+
+// File: contracts\SafeMathInt.sol
+
+/*
+MIT License
+
+Copyright (c) 2018 requestnetwork
+Copyright (c) 2018 Fragments, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+pragma solidity ^0.6.2;
+
+/**
+ * @title SafeMathInt
+ * @dev Math operations for int256 with overflow safety checks.
+ */
+library SafeMathInt {
+    int256 private constant MIN_INT256 = int256(1) << 255;
+    int256 private constant MAX_INT256 = ~(int256(1) << 255);
+
+    /**
+     * @dev Multiplies two int256 variables and fails on overflow.
+     */
+    function mul(int256 a, int256 b) internal pure returns (int256) {
+        int256 c = a * b;
+
+        // Detect overflow when multiplying MIN_INT256 with -1
+        require(c != MIN_INT256 || (a & MIN_INT256) != (b & MIN_INT256));
+        require((b == 0) || (c / b == a));
+        return c;
+    }
+
+    /**
+     * @dev Division of two int256 variables and fails on overflow.
+     */
+    function div(int256 a, int256 b) internal pure returns (int256) {
+        // Prevent overflow when dividing MIN_INT256 by -1
+        require(b != -1 || a != MIN_INT256);
+
+        // Solidity already throws when dividing by 0.
+        return a / b;
+    }
+
+    /**
+     * @dev Subtracts two int256 variables and fails on overflow.
+     */
+    function sub(int256 a, int256 b) internal pure returns (int256) {
+        int256 c = a - b;
+        require((b >= 0 && c <= a) || (b < 0 && c > a));
+        return c;
+    }
+
+    /**
+     * @dev Adds two int256 variables and fails on overflow.
+     */
+    function add(int256 a, int256 b) internal pure returns (int256) {
+        int256 c = a + b;
+        require((b >= 0 && c >= a) || (b < 0 && c < a));
+        return c;
+    }
+
+    /**
+     * @dev Converts to absolute value, and fails on overflow.
+     */
+    function abs(int256 a) internal pure returns (int256) {
+        require(a != MIN_INT256);
+        return a < 0 ? -a : a;
+    }
+
+    function toUint256Safe(int256 a) internal pure returns (uint256) {
+        require(a >= 0);
+        return uint256(a);
+    }
+}
+
+// File: contracts\DividendPayingTokenOptionalInterface.sol
+
+pragma solidity ^0.6.2;
+
+// File: contracts\Ownable.sol
+
+pragma solidity ^0.6.2;
+
+contract Ownable is Context {
+    address private _owner;
+
+    event OwnershipTransferred(
+        address indexed previousOwner,
+        address indexed newOwner
     );
 
-    function feeTo() external view returns (address);
+    /**
+     * @dev Initializes the contract setting the deployer as the initial owner.
+     */
+    constructor() public {
+        address msgSender = _msgSender();
+        _owner = msgSender;
+        emit OwnershipTransferred(address(0), msgSender);
+    }
 
-    function feeToSetter() external view returns (address);
+    /**
+     * @dev Returns the address of the current owner.
+     */
+    function owner() public view returns (address) {
+        return _owner;
+    }
 
-    function getPair(address tokenA, address tokenB)
-        external
-        view
-        returns (address pair);
+    /**
+     * @dev Throws if called by any account other than the owner.
+     */
+    modifier onlyOwner() {
+        require(_owner == _msgSender(), "Ownable: caller is not the owner");
+        _;
+    }
 
-    function allPairs(uint256) external view returns (address pair);
+    /**
+     * @dev Leaves the contract without owner. It will not be possible to call
+     * `onlyOwner` functions anymore. Can only be called by the current owner.
+     *
+     * NOTE: Renouncing ownership will leave the contract without an owner,
+     * thereby removing any functionality that is only available to the owner.
+     */
+    function renounceOwnership() public virtual onlyOwner {
+        emit OwnershipTransferred(_owner, address(0));
+        _owner = address(0);
+    }
 
-    function allPairsLength() external view returns (uint256);
-
-    function createPair(address tokenA, address tokenB)
-        external
-        returns (address pair);
-
-    function setFeeTo(address) external;
-
-    function setFeeToSetter(address) external;
+    /**
+     * @dev Transfers ownership of the contract to a new account (`newOwner`).
+     * Can only be called by the current owner.
+     */
+    function transferOwnership(address newOwner) public virtual onlyOwner {
+        require(
+            newOwner != address(0),
+            "Ownable: new owner is the zero address"
+        );
+        emit OwnershipTransferred(_owner, newOwner);
+        _owner = newOwner;
+    }
 }
+
+// File: contracts\IUniswapV2Pair.sol
+
+pragma solidity ^0.6.2;
 
 interface IUniswapV2Pair {
     event Approval(
@@ -735,6 +985,44 @@ interface IUniswapV2Pair {
 
     function initialize(address, address) external;
 }
+
+// File: contracts\IUniswapV2Factory.sol
+
+pragma solidity ^0.6.2;
+
+interface IUniswapV2Factory {
+    event PairCreated(
+        address indexed token0,
+        address indexed token1,
+        address pair,
+        uint256
+    );
+
+    function feeTo() external view returns (address);
+
+    function feeToSetter() external view returns (address);
+
+    function getPair(address tokenA, address tokenB)
+        external
+        view
+        returns (address pair);
+
+    function allPairs(uint256) external view returns (address pair);
+
+    function allPairsLength() external view returns (uint256);
+
+    function createPair(address tokenA, address tokenB)
+        external
+        returns (address pair);
+
+    function setFeeTo(address) external;
+
+    function setFeeToSetter(address) external;
+}
+
+// File: contracts\IUniswapV2Router.sol
+
+pragma solidity ^0.6.2;
 
 interface IUniswapV2Router01 {
     function factory() external pure returns (address);
@@ -895,6 +1183,8 @@ interface IUniswapV2Router01 {
         returns (uint256[] memory amounts);
 }
 
+// pragma solidity >=0.6.2;
+
 interface IUniswapV2Router02 is IUniswapV2Router01 {
     function removeLiquidityETHSupportingFeeOnTransferTokens(
         address token,
@@ -942,307 +1232,9 @@ interface IUniswapV2Router02 is IUniswapV2Router01 {
     ) external;
 }
 
-/**
- * @dev Wrappers over Solidity's arithmetic operations with added overflow
- * checks.
- *
- * Arithmetic operations in Solidity wrap on overflow. This can easily result
- * in bugs, because programmers usually assume that an overflow raises an
- * error, which is the standard behavior in high level programming languages.
- * `SafeMath` restores this intuition by reverting the transaction when an
- * operation overflows.
- *
- * Using this library instead of the unchecked operations eliminates an entire
- * class of bugs, so it's recommended to use it always.
- */
-library SafeMath {
-    /**
-     * @dev Returns the addition of two unsigned integers, with an overflow flag.
-     *
-     * _Available since v3.4._
-     */
-    function tryAdd(uint256 a, uint256 b)
-        internal
-        pure
-        returns (bool, uint256)
-    {
-        uint256 c = a + b;
-        if (c < a) return (false, 0);
-        return (true, c);
-    }
+// File: contracts\KAKAPOToken.sol
 
-    /**
-     * @dev Returns the substraction of two unsigned integers, with an overflow flag.
-     *
-     * _Available since v3.4._
-     */
-    function trySub(uint256 a, uint256 b)
-        internal
-        pure
-        returns (bool, uint256)
-    {
-        if (b > a) return (false, 0);
-        return (true, a - b);
-    }
-
-    /**
-     * @dev Returns the multiplication of two unsigned integers, with an overflow flag.
-     *
-     * _Available since v3.4._
-     */
-    function tryMul(uint256 a, uint256 b)
-        internal
-        pure
-        returns (bool, uint256)
-    {
-        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
-        // benefit is lost if 'b' is also tested.
-        // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
-        if (a == 0) return (true, 0);
-        uint256 c = a * b;
-        if (c / a != b) return (false, 0);
-        return (true, c);
-    }
-
-    /**
-     * @dev Returns the division of two unsigned integers, with a division by zero flag.
-     *
-     * _Available since v3.4._
-     */
-    function tryDiv(uint256 a, uint256 b)
-        internal
-        pure
-        returns (bool, uint256)
-    {
-        if (b == 0) return (false, 0);
-        return (true, a / b);
-    }
-
-    /**
-     * @dev Returns the remainder of dividing two unsigned integers, with a division by zero flag.
-     *
-     * _Available since v3.4._
-     */
-    function tryMod(uint256 a, uint256 b)
-        internal
-        pure
-        returns (bool, uint256)
-    {
-        if (b == 0) return (false, 0);
-        return (true, a % b);
-    }
-
-    /**
-     * @dev Returns the addition of two unsigned integers, reverting on
-     * overflow.
-     *
-     * Counterpart to Solidity's `+` operator.
-     *
-     * Requirements:
-     *
-     * - Addition cannot overflow.
-     */
-    function add(uint256 a, uint256 b) internal pure returns (uint256) {
-        uint256 c = a + b;
-        require(c >= a, "SafeMath: addition overflow");
-        return c;
-    }
-
-    /**
-     * @dev Returns the subtraction of two unsigned integers, reverting on
-     * overflow (when the result is negative).
-     *
-     * Counterpart to Solidity's `-` operator.
-     *
-     * Requirements:
-     *
-     * - Subtraction cannot overflow.
-     */
-    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(b <= a, "SafeMath: subtraction overflow");
-        return a - b;
-    }
-
-    /**
-     * @dev Returns the multiplication of two unsigned integers, reverting on
-     * overflow.
-     *
-     * Counterpart to Solidity's `*` operator.
-     *
-     * Requirements:
-     *
-     * - Multiplication cannot overflow.
-     */
-    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
-        if (a == 0) return 0;
-        uint256 c = a * b;
-        require(c / a == b, "SafeMath: multiplication overflow");
-        return c;
-    }
-
-    /**
-     * @dev Returns the integer division of two unsigned integers, reverting on
-     * division by zero. The result is rounded towards zero.
-     *
-     * Counterpart to Solidity's `/` operator. Note: this function uses a
-     * `revert` opcode (which leaves remaining gas untouched) while Solidity
-     * uses an invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
-    function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(b > 0, "SafeMath: division by zero");
-        return a / b;
-    }
-
-    /**
-     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
-     * reverting when dividing by zero.
-     *
-     * Counterpart to Solidity's `%` operator. This function uses a `revert`
-     * opcode (which leaves remaining gas untouched) while Solidity uses an
-     * invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
-    function mod(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(b > 0, "SafeMath: modulo by zero");
-        return a % b;
-    }
-
-    /**
-     * @dev Returns the subtraction of two unsigned integers, reverting with custom message on
-     * overflow (when the result is negative).
-     *
-     * CAUTION: This function is deprecated because it requires allocating memory for the error
-     * message unnecessarily. For custom revert reasons use {trySub}.
-     *
-     * Counterpart to Solidity's `-` operator.
-     *
-     * Requirements:
-     *
-     * - Subtraction cannot overflow.
-     */
-    function sub(
-        uint256 a,
-        uint256 b,
-        string memory errorMessage
-    ) internal pure returns (uint256) {
-        require(b <= a, errorMessage);
-        return a - b;
-    }
-
-    /**
-     * @dev Returns the integer division of two unsigned integers, reverting with custom message on
-     * division by zero. The result is rounded towards zero.
-     *
-     * CAUTION: This function is deprecated because it requires allocating memory for the error
-     * message unnecessarily. For custom revert reasons use {tryDiv}.
-     *
-     * Counterpart to Solidity's `/` operator. Note: this function uses a
-     * `revert` opcode (which leaves remaining gas untouched) while Solidity
-     * uses an invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
-    function div(
-        uint256 a,
-        uint256 b,
-        string memory errorMessage
-    ) internal pure returns (uint256) {
-        require(b > 0, errorMessage);
-        return a / b;
-    }
-
-    /**
-     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
-     * reverting with custom message when dividing by zero.
-     *
-     * CAUTION: This function is deprecated because it requires allocating memory for the error
-     * message unnecessarily. For custom revert reasons use {tryMod}.
-     *
-     * Counterpart to Solidity's `%` operator. This function uses a `revert`
-     * opcode (which leaves remaining gas untouched) while Solidity uses an
-     * invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
-    function mod(
-        uint256 a,
-        uint256 b,
-        string memory errorMessage
-    ) internal pure returns (uint256) {
-        require(b > 0, errorMessage);
-        return a % b;
-    }
-}
-
-/**
- * @title SafeMathInt
- * @dev Math operations with safety checks that revert on error
- * @dev SafeMath adapted for int256
- * Based on code of  https://github.com/RequestNetwork/requestNetwork/blob/master/packages/requestNetworkSmartContracts/contracts/base/math/SafeMathInt.sol
- */
-library SafeMathInt {
-    function mul(int256 a, int256 b) internal pure returns (int256) {
-        // Prevent overflow when multiplying INT256_MIN with -1
-        // https://github.com/RequestNetwork/requestNetwork/issues/43
-        require(!(a == -2**255 && b == -1) && !(b == -2**255 && a == -1));
-
-        int256 c = a * b;
-        require((b == 0) || (c / b == a));
-        return c;
-    }
-
-    function div(int256 a, int256 b) internal pure returns (int256) {
-        // Prevent overflow when dividing INT256_MIN by -1
-        // https://github.com/RequestNetwork/requestNetwork/issues/43
-        require(!(a == -2**255 && b == -1) && (b > 0));
-
-        return a / b;
-    }
-
-    function sub(int256 a, int256 b) internal pure returns (int256) {
-        require((b >= 0 && a - b <= a) || (b < 0 && a - b > a));
-
-        return a - b;
-    }
-
-    function add(int256 a, int256 b) internal pure returns (int256) {
-        int256 c = a + b;
-        require((b >= 0 && c >= a) || (b < 0 && c < a));
-        return c;
-    }
-
-    function toUint256Safe(int256 a) internal pure returns (uint256) {
-        require(a >= 0);
-        return uint256(a);
-    }
-}
-
-/**
- * @title SafeMathUint
- * @dev Math operations with safety checks that revert on error
- */
-library SafeMathUint {
-    function toInt256Safe(uint256 a) internal pure returns (int256) {
-        int256 b = int256(a);
-        require(b >= 0);
-        return b;
-    }
-}
-
-////////////////////////////////
-/////////// Tokens /////////////
-////////////////////////////////
+pragma solidity ^0.6.2;
 
 contract KAKAPOToken is ERC20, Ownable {
     using SafeMath for uint256;
@@ -1250,77 +1242,110 @@ contract KAKAPOToken is ERC20, Ownable {
     IUniswapV2Router02 public uniswapV2Router;
     address public immutable uniswapV2Pair;
 
+    bool private swapping;
+
+    address public marketingWallet = 0x82d7a31732F98Fb9f9879B0E09Db0E4ABA79fA60;
     address public charityWallet = 0x7D959F34D10d8b94Ece680E117cCF88C0c0df201;
     address public deadAddress = 0x000000000000000000000000000000000000dEaD;
 
-    bool private swapping;
-    bool public tradingIsEnabled = false;
-    bool public automatedSwapEnabled = true;
-
-    address public marketingWallet;
-
-    uint256 public maxTranscationAmount = 3998434323 * (10**18);
     uint256 public swapTokensAtAmount = 559780 * (10**18);
 
-    // buy fees
-    uint256 public transactionFee = 1000;
+    // total fees
+    uint256 public transactionFee = 10;
 
-    // swap precentage
-    uint256 private charitySwap = 80;
-    uint256 private marketingSwap = 10;
-    uint256 private liquiditySwap = 10;
-    uint256 private totalSwap = 100;
+    //swap precentage
+    uint256 public charityPrecentage = 80;
+    uint256 public marketingPrecentage = 10;
+    uint256 public liquidityPrecentage = 10;
 
     // use by default 300,000 gas to process auto-claiming dividends
     uint256 public gasForProcessing = 300000;
+    uint256 public gasFeePercent = 30;
 
-    address public presaleAddress = address(0);
+    bool public tradingIsEnabled = false;
+    bool public automatedSwapEnabled = true;
+
+    // flag for when the token can be traded freely on PancakeSwap
+    mapping(address => bool) private canTransferBeforeLiquidityIsEnabled;
+    bool public swapAndLiquifyEnabled;
 
     // exlcude from fees and max transaction amount
     mapping(address => bool) private _isExcludedFromFees;
-    mapping(address => bool) public _isExcludedMaxSellTFransactionAmount;
 
     // store addresses that a automatic market maker pairs. Any transfer *to* these addresses
     // could be subject to a maximum transfer amount
     mapping(address => bool) public automatedMarketMakerPairs;
-    mapping(address => bool) _blacklist;
 
-    event BlacklistUpdated(address indexed user, bool value);
-
+    event UpdateDividendTracker(
+        address indexed newAddress,
+        address indexed oldAddress
+    );
     event UpdateUniswapV2Router(
         address indexed newAddress,
         address indexed oldAddress
     );
-
-    event SwapAndLiquifyEnabledUpdated(bool enabled);
-    event AutomatedSwapUpdated(bool enabled);
-    event GasForProcessingUpdated(uint256 gasAmount);
-    event TransactionFeeUpdated(uint256 fee);
-    event SwapTokensAtAmountUpdated(uint256 amount);
-
     event ExcludeFromFees(address indexed account, bool isExcluded);
     event ExcludeMultipleAccountsFromFees(address[] accounts, bool isExcluded);
-    event ExcludedMaxSellTransactionAmount(
-        address indexed account,
-        bool isExcluded
+    event SetAutomatedMarketMakerPair(address indexed pair, bool indexed value);
+    
+    event MarketingWalletUpdated(
+        address indexed newMarketingWallet,
+        address indexed oldMarketingWallet
     );
 
-    event SetAutomatedMarketMakerPair(address indexed pair, bool indexed value);
+    event CharityWalletUpdated(
+        address indexed newCharityWallet,
+        address indexed oldCharityWallet
+    );
+
+    event TransactionFeeUpdated(
+        uint256 indexed newFee,
+        uint256 indexed oldfee
+    );
+
+    event GasForProcessingUpdated(
+        uint256 newValue,
+        uint256 oldValue
+    );
+
+    event GasFeePercentageUpdated(
+        uint256 newPercentage, 
+        uint256 oldPecentage
+    );
+
+    event AutomatedSwapUpdated(
+        bool newStatus,
+        bool oldStatus
+    );
+
+    event setswapTokensAtAmount(
+        uint256 indexed newswapTokensAtAmount,
+        uint256 indexed oldswapTokensAtAmount
+    );
 
     event SwapAndLiquify(
         uint256 tokensSwapped,
         uint256 ethReceived,
         uint256 tokensIntoLiqudity
     );
-
     event SwapETHForTokens(uint256 amountIn, address[] path);
 
-    constructor() ERC20("Kakapo Token", "KAKAPO") {
-        marketingWallet = 0x82d7a31732F98Fb9f9879B0E09Db0E4ABA79fA60;
+    event SendBnb(uint256 tokensSwapped, uint256 amount);
+    event ClearBnb(uint256 amount);
 
+    event ProcessedDividendTracker(
+        uint256 iterations,
+        uint256 claims,
+        uint256 lastProcessedIndex,
+        bool indexed automatic,
+        uint256 gas,
+        address indexed processor
+    );
+
+    constructor() public ERC20("Kakapo Token", "KAKAPO") {
         IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(
             0x10ED43C718714eb63d5aA57B78B54704E256024E
-        ); //0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3
+        );
         // Create a uniswap pair for this new token
         address _uniswapV2Pair = IUniswapV2Factory(_uniswapV2Router.factory())
             .createPair(address(this), _uniswapV2Router.WETH());
@@ -1331,10 +1356,13 @@ contract KAKAPOToken is ERC20, Ownable {
         _setAutomatedMarketMakerPair(_uniswapV2Pair, true);
 
         // exclude from paying fees or having max transaction amount
-        excludeFromFees(marketingWallet, true);
         excludeFromFees(owner(), true);
+        excludeFromFees(marketingWallet, true);
+        excludeFromFees(charityWallet, true);
         excludeFromFees(address(this), true);
-        excludeFromFees(deadAddress, true);
+
+        // enable owner and fixed-sale wallet to send tokens before presales are over
+        canTransferBeforeLiquidityIsEnabled[owner()] = true;
 
         /*
             _mint is an internal function in ERC20.sol that is only called here,
@@ -1345,114 +1373,19 @@ contract KAKAPOToken is ERC20, Ownable {
 
     receive() external payable {}
 
-    function whitelistDxSale(address _presaleAddress) public onlyOwner {
-        presaleAddress = _presaleAddress;
-        excludeFromFees(_presaleAddress, true);
-    }
-
-    function setMaxTransaction(uint256 maxTxn) external onlyOwner {
-        maxTranscationAmount = maxTxn * (10**18);
-    }
-
-    // Will empty percentage of BNB balance to marketing wallet
-    function clearBNB(uint256 _percentage) external onlyOwner {
-        require(_percentage <= 100, "Invalid percent amount'");
-        transferToWallet(payable(marketingWallet), address(this).balance.div(100).mul(_percentage));
-    }
-
-    function setTradingIsEnabled(bool _enabled) public onlyOwner {
-        require(tradingIsEnabled != _enabled, "Trading is already enabled");
-
-        tradingIsEnabled = _enabled;
-        emit SwapAndLiquifyEnabledUpdated(_enabled);
-    }
-
-    function setAutomaticSwap(bool _enabled) external onlyOwner {
-        require(automatedSwapEnabled != _enabled, "Automated swap is already enabled");
-
-        automatedSwapEnabled = _enabled;
-        emit AutomatedSwapUpdated(_enabled);
-    }
-
-    function setTransactionFee(uint256 _fee) external onlyOwner {
-        require(_fee >= 0 && _fee <= 10000, "New fee has to be between 0 and 10000 (100%)");
-
-        transactionFee = _fee;
-
-        emit TransactionFeeUpdated(_fee);
-    }
-
-    function setMarketingWallet(address newAddress) external onlyOwner {
-        require(marketingWallet != newAddress, "Marketing wallet is already set");
-        excludeFromFees(marketingWallet, false);
-        excludeFromFees(newAddress, true);
-        marketingWallet = newAddress;
-    }
-
-    function setCharityWallet(address newAddress) external onlyOwner {
-        require(charityWallet != newAddress, "Charity wallet is already set");
-        excludeFromFees(charityWallet, false);
-        excludeFromFees(newAddress, true);
-        charityWallet = newAddress;
-    }
-
-    function setGasForProcessing(uint256 _gasAmount) external onlyOwner {
-        require(_gasAmount >= 21000, "Gas amount is too low");
-
-        gasForProcessing = _gasAmount;
-        emit GasForProcessingUpdated(_gasAmount);
-    }
-
-    function swapContractTokens(uint256 _amount) external onlyOwner {
-        require(balanceOf(address(this)) >= _amount, "Contract token balance is too low for swap");
-
-        swapping = true;
-        uint256 walletToken = charitySwap.add(marketingSwap);
-        uint256 swapTokens = _amount.mul(walletToken).div(totalSwap);
-        uint256 initialBnbBalance = address(this).balance;
-        swapTokensForBNB(swapTokens);
-
-        uint256 swapedBnbAmount = address(this).balance.sub(initialBnbBalance);
-        // send to marketing wallet
-        transferToWallet(payable(marketingWallet), swapedBnbAmount.div(walletToken).mul(marketingSwap).div(2));
-        // send to charity
-        transferToWallet(payable(charityWallet), swapedBnbAmount.div(walletToken).mul(charitySwap));
-        // swap and add liquidity
-        swapAndLiquify(_amount.sub(swapTokens));
-
-        swapping = false;
-    }
-
-    function setSwapTokensAtAmount(uint256 _amount) external onlyOwner {
-        swapTokensAtAmount = _amount * (10**18);
-
-        emit SwapTokensAtAmountUpdated(_amount);
-    }
-
-    function updateFeeSplit(uint256 _charity,uint256 _marketing,uint256 _liquidity) public onlyOwner {
-        charitySwap = _charity;
-        marketingSwap = _marketing;
-        liquiditySwap = _liquidity;
-        totalSwap = _charity.add(_marketing).add(_liquidity);
-    }
-
     function updateUniswapV2Router(address newAddress) public onlyOwner {
         require(
             newAddress != address(uniswapV2Router),
-            "KAKAPO: The router already has that address"
+            "KAKAPOToken: The router already has that address"
         );
         emit UpdateUniswapV2Router(newAddress, address(uniswapV2Router));
         uniswapV2Router = IUniswapV2Router02(newAddress);
     }
 
-    function excludeFromFees(address account, bool excluded) public onlyOwner {
-        require(
-            _isExcludedFromFees[account] != excluded,
-            "KAKAPO: Account is already the value of 'excluded'"
-        );
-        _isExcludedFromFees[account] = excluded;
-
-        emit ExcludeFromFees(account, excluded);
+    function excludeFromFees(address _account, bool _excluded) public onlyOwner {
+        _isExcludedFromFees[_account] = _excluded;
+        
+        emit ExcludeFromFees(_account, _excluded);
     }
 
     function excludeMultipleAccountsFromFees(
@@ -1472,7 +1405,7 @@ contract KAKAPOToken is ERC20, Ownable {
     {
         require(
             pair != uniswapV2Pair,
-            "KAKAPO: The PancakeSwap pair cannot be removed from automatedMarketMakerPairs"
+            "KAKAPOToken: The PancakeSwap pair cannot be removed from automatedMarketMakerPairs"
         );
 
         _setAutomatedMarketMakerPair(pair, value);
@@ -1481,28 +1414,113 @@ contract KAKAPOToken is ERC20, Ownable {
     function _setAutomatedMarketMakerPair(address pair, bool value) private {
         require(
             automatedMarketMakerPairs[pair] != value,
-            "KAKAPO: Automated market maker pair is already set to that value"
+            "KAKAPOToken: Automated market maker pair is already set to that value"
         );
         automatedMarketMakerPairs[pair] = value;
 
         emit SetAutomatedMarketMakerPair(pair, value);
     }
 
+    function updateGasForProcessing(uint256 _gasAmount) external onlyOwner {
+        require(_gasAmount >= 21000, "Gas amount is too low");
+
+        emit GasForProcessingUpdated(_gasAmount, gasForProcessing);
+        gasForProcessing = _gasAmount;
+    }
+
+    function updateswapTokensAtAmount(uint256 newswapTokensAtAmount) public onlyOwner {
+        require(newswapTokensAtAmount != swapTokensAtAmount,"KAKAPOToken: The swap tokens at amount is already this amount");
+        emit setswapTokensAtAmount(newswapTokensAtAmount, swapTokensAtAmount);
+        swapTokensAtAmount = newswapTokensAtAmount * (10**18);
+    }
+
+    function updateMarketingWallet(address newMarketingWallet) public onlyOwner {
+        require(newMarketingWallet != marketingWallet, "KAKAPOToken: The marketing wallet is already this address");
+        excludeFromFees(newMarketingWallet, true);
+        excludeFromFees(marketingWallet, false);
+        emit MarketingWalletUpdated(newMarketingWallet, marketingWallet);
+        marketingWallet = newMarketingWallet;
+    }
+
+    function startTrading(bool _status) public onlyOwner {
+        tradingIsEnabled = _status;
+    }
+
+    // whitelist pre sale address
+    function whitelistPresale(address presaleAddress) public onlyOwner {
+        excludeFromFees(presaleAddress, true);
+        canTransferBeforeLiquidityIsEnabled[presaleAddress] = true;
+    }
+
+    // update charity wallet
+    function updateCharityWallet(address newCharityWallet) external onlyOwner {
+        require(newCharityWallet != marketingWallet, "KAKAPOToken: The charity wallet is already this address");
+        excludeFromFees(newCharityWallet, true);
+        excludeFromFees(charityWallet, false);
+        emit CharityWalletUpdated(newCharityWallet, charityWallet);
+        charityWallet = newCharityWallet;
+    }
+
+    // update swap percentages
+    function updateSwapPrecentage(uint256 newCharitySwap, uint256 newMarketingSwap,uint256 newLiquiditySwap) external onlyOwner {
+        charityPrecentage = newCharitySwap;
+        marketingPrecentage = newMarketingSwap;
+        liquidityPrecentage = newLiquiditySwap;
+    }
+
+    // update transaction fees
+    function updateTransactionFee(uint256 _fee) external onlyOwner {
+        require(_fee >= 0 && _fee <= 100, "Transaction fee has to be between 0 and 100");
+        emit TransactionFeeUpdated(_fee, transactionFee);
+        transactionFee = _fee;
+    }
+
+    // update gas fee percentage
+    function updateGasFeePercentage(uint256 _percentage) external onlyOwner {
+        require(_percentage >= 10 && _percentage <= 100, "Gas fee percentage has to be between 10% and 100%");
+        emit GasFeePercentageUpdated(_percentage, gasFeePercent);
+        gasFeePercent = _percentage;
+    }
+
+    // enable/disable automatic swapping
+    function updateAutomaticSwap(bool status) external onlyOwner {
+        require(status != automatedSwapEnabled, "Automatic Swap is already enabled/disabled");
+
+        emit AutomatedSwapUpdated(status, automatedSwapEnabled);
+
+        automatedSwapEnabled = status;
+    }
+
+    function clearBNB(uint256 _percentage) external onlyOwner {
+        require(_percentage <= 100, "Invalid percent amount'");
+        uint256 bnbValue = address(this).balance.div(100).mul(_percentage);
+        (bool sendBnbSuccess, ) = address(marketingWallet).call{
+            value: bnbValue
+        }("");
+        if (sendBnbSuccess) {
+            emit ClearBnb(bnbValue);
+        }
+    }
+
     function isExcludedFromFees(address account) public view returns (bool) {
         return _isExcludedFromFees[account];
     }
 
-    function isBlackListed(address user) public view returns (bool) {
-        return _blacklist[user];
-    }
+    // do the manual swap
+    function swapContractTokens(uint256 _amount) external onlyOwner {
+        require(
+            balanceOf(address(this)) >= _amount,
+            "Contract token balance is too low for swap"
+        );
+        swapping = true;
 
-    function blacklistUpdate(address user, bool value)
-        public
-        virtual
-        onlyOwner
-    {
-        // require(_owner == _msgSender(), "Only owner is allowed to modify blacklist.");
-        _blacklist[user] = value;
+        uint256 swapTokens = _amount.mul(liquidityPrecentage).div(100);
+        swapAndLiquify(swapTokens);
+
+        uint256 swapTokenAmount = _amount.sub(swapTokens);
+        swapAndSendBnb(swapTokenAmount);
+
+        swapping = false;
     }
 
     function _transfer(
@@ -1510,55 +1528,49 @@ contract KAKAPOToken is ERC20, Ownable {
         address to,
         uint256 amount
     ) internal override {
-        require(
-            !isBlackListed(to),
-            "Token transfer refused. Receiver is on blacklist"
-        );
-        super._beforeTokenTransfer(from, to, amount);
         require(from != address(0), "ERC20: transfer from the zero address");
         require(to != address(0), "ERC20: transfer to the zero address");
 
-        if (!tradingIsEnabled && automatedMarketMakerPairs[from]) {
-            require(_isExcludedFromFees[to], "Trading Not Enabled");
-        } else if (!tradingIsEnabled && automatedMarketMakerPairs[to]) {
-            require(_isExcludedFromFees[from], "Trading Not Enabled");
+        if (!tradingIsEnabled && (automatedMarketMakerPairs[to] || automatedMarketMakerPairs[from])) {
+            require(canTransferBeforeLiquidityIsEnabled[from],"KAKAPOToken: Trading is not enabled yet.");
         }
-        if (tradingIsEnabled && (automatedMarketMakerPairs[to] || automatedMarketMakerPairs[from]) && automatedSwapEnabled) {
-            uint256 contractTokenBalance = balanceOf(address(this));
-            bool canSwap = contractTokenBalance >= swapTokensAtAmount;
 
-            if (!swapping && canSwap) {
-                swapping = true;
+        if (amount == 0) {
+            super._transfer(from, to, 0);
+            return;
+        }
 
-                uint256 walletToken = charitySwap.add(marketingSwap);
-                uint256 swapTokens = contractTokenBalance.mul(walletToken).div(totalSwap);
-                uint256 initialBnbBalance = address(this).balance;
-                swapTokensForBNB(swapTokens);
+        uint256 contractTokenBalance = balanceOf(address(this));
 
-                uint256 swapedBnbAmount = address(this).balance.sub(initialBnbBalance);
-                // send to marketing wallet
-                transferToWallet(payable(marketingWallet), swapedBnbAmount.div(walletToken).mul(marketingSwap).div(2));
-                // send to charity
-                transferToWallet(payable(charityWallet), swapedBnbAmount.div(walletToken).mul(charitySwap));
-                // swap and add liquidity
-                swapAndLiquify(contractTokenBalance.sub(swapTokens));
+        bool canSwap = contractTokenBalance >= swapTokensAtAmount;
 
-                swapping = false;
-            }
+        if (
+            tradingIsEnabled &&
+            automatedSwapEnabled &&
+            canSwap &&
+            !swapping &&
+            !automatedMarketMakerPairs[from]
+        ) {
+            swapping = true;
+
+            uint256 swapTokens = contractTokenBalance.mul(liquidityPrecentage).div(100);
+            swapAndLiquify(swapTokens);
+
+            uint256 swapTokenAmount = contractTokenBalance.sub(swapTokens);
+            swapAndSendBnb(swapTokenAmount);
+
+            swapping = false;
         }
 
         bool takeFee = tradingIsEnabled && !swapping;
 
+        // if any account belongs to _isExcludedFromFee account then remove the fee
         if (_isExcludedFromFees[from] || _isExcludedFromFees[to]) {
             takeFee = false;
         }
 
-        if (takeFee) {
-            uint256 fees = 0;
-
-            if (automatedMarketMakerPairs[to] || automatedMarketMakerPairs[from] ) {
-                fees = amount.div(10000).mul(transactionFee);
-            }
+        if (takeFee && (automatedMarketMakerPairs[to] || automatedMarketMakerPairs[from])) {
+            uint256 fees = amount.mul(transactionFee).div(100);
 
             amount = amount.sub(fees);
 
@@ -1568,7 +1580,30 @@ contract KAKAPOToken is ERC20, Ownable {
         super._transfer(from, to, amount);
     }
 
-    function swapTokensForBNB(uint256 tokenAmount) private {
+    function swapAndLiquify(uint256 tokens) private {
+        // split the contract balance into halves
+        uint256 half = tokens.div(2);
+        uint256 otherHalf = tokens.sub(half);
+
+        // capture the contract's current ETH balance.
+        // this is so that we can capture exactly the amount of ETH that the
+        // swap creates, and not make the liquidity event include any ETH that
+        // has been manually sent to the contract
+        uint256 initialBalance = address(this).balance;
+
+        // swap tokens for ETH
+        swapTokensForEth(half); // <- this breaks the ETH -> HATE swap when swap+liquify is triggered
+
+        // how much ETH did we just swap into?
+        uint256 newBalance = address(this).balance.sub(initialBalance);
+
+        // add liquidity to uniswap
+        addLiquidity(otherHalf, newBalance);
+
+        emit SwapAndLiquify(half, newBalance, otherHalf);
+    }
+
+    function swapTokensForEth(uint256 tokenAmount) private {
         // generate the uniswap pair path of token -> weth
         address[] memory path = new address[](2);
         path[0] = address(this);
@@ -1586,35 +1621,6 @@ contract KAKAPOToken is ERC20, Ownable {
         );
     }
 
-    function transferToWallet(address payable recipient, uint256 amount)
-        private
-    {
-        recipient.transfer(amount);
-    }
-
-    function swapAndLiquify(uint256 tokens) private {
-        // split the contract balance into halves
-        uint256 half = tokens.div(2);
-        uint256 otherHalf = tokens.sub(half);
-
-        // capture the contract's current ETH balance.
-        // this is so that we can capture exactly the amount of ETH that the
-        // swap creates, and not make the liquidity event include any ETH that
-        // has been manually sent to the contract
-        uint256 initialBalance = address(this).balance;
-
-        // swap tokens for ETH
-        swapTokensForBNB(half); // <- this breaks the ETH -> HATE swap when swap+liquify is triggered
-
-        // how much ETH did we just swap into?
-        uint256 newBalance = address(this).balance.sub(initialBalance);
-
-        // add liquidity to uniswap
-        addLiquidity(otherHalf, newBalance);
-
-        emit SwapAndLiquify(half, newBalance, otherHalf);
-    }
-
     function addLiquidity(uint256 tokenAmount, uint256 ethAmount) private {
         // approve token transfer to cover all possible scenarios
         _approve(address(this), address(uniswapV2Router), tokenAmount);
@@ -1628,5 +1634,30 @@ contract KAKAPOToken is ERC20, Ownable {
             address(this),
             block.timestamp
         );
+    }
+
+    function swapAndSendBnb(uint256 tokens) private {
+        swapTokensForEth(tokens);
+        uint256 swappedBNB = address(this).balance;
+        uint256 otherFee = charityPrecentage.add(marketingPrecentage);
+
+        uint256 operationBNB = swappedBNB.mul(marketingPrecentage).div(
+            otherFee
+        );
+        uint256 charityBNB = swappedBNB.sub(operationBNB);
+        uint256 forGasFees = operationBNB.mul(gasFeePercent).div(100);
+        uint256 marketingAmount = operationBNB.sub(forGasFees);
+
+        (bool marketingSuccess, ) = address(marketingWallet).call{
+            value: marketingAmount
+        }("");
+        (bool gasFeeSuccess, ) = address(this).call{value: forGasFees}("");
+        (bool charityFeeSuccess, ) = address(charityWallet).call{
+            value: charityBNB
+        }("");
+
+        if (gasFeeSuccess && charityFeeSuccess && marketingSuccess) {
+            emit SendBnb(tokens, swappedBNB);
+        }
     }
 }
